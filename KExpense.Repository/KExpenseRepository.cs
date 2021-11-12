@@ -1,0 +1,84 @@
+﻿using KExpense.Model;
+using KExpense.Repository.interfaces;
+using KExpense.Repository.kModelMappers;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text;
+
+namespace KExpense.Repository
+{
+    public class KExpenseRepository:IKExpenseRepository
+    {
+        private readonly AKDBAbstraction dbAbstraction;
+        // MySql.Data.MySqlClient.
+
+
+        /*
+         public static DateTime? ToDate(this string dateTimeStr, params string[] dateFmt)
+	{
+		// example: var dt = "2011-03-21 13:26".ToDate(new string[]{"yyyy-MM-dd HH:mm", 
+		//                                                  "M/d/yyyy h:mm:ss tt"});
+		const DateTimeStyles style = DateTimeStyles.AllowWhiteSpaces;
+		if (dateFmt == null)
+		{
+			var dateInfo = System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat;
+			dateFmt=dateInfo.GetAllDateTimePatterns();
+		}
+		var result = (DateTime.TryParseExact(dateTimeStr, dateFmt,
+	 		CultureInfo.InvariantCulture, style, out var dt)) ? dt : null as DateTime?;
+		return result;
+	}
+         
+         */
+        private DateTime strToDate(string str)
+        {
+
+            string dateFmt = "yyyyMMdd";
+            const DateTimeStyles style = DateTimeStyles.AllowWhiteSpaces;
+           /* if (dateFmt == null)
+            {
+                var dateInfo = System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat;
+                dateFmt = dateInfo.GetAllDateTimePatterns();
+            }*/
+            var result = (DateTime.TryParseExact(str, dateFmt,
+                 CultureInfo.InvariantCulture, style, out var dt)) ? dt : null as DateTime?;
+            return result.GetValueOrDefault(DateTime.MinValue);
+
+        }
+
+
+        public List<ExpenseModel> GetAllKExpenses()
+        {
+            List<ExpenseModel> result = new List<ExpenseModel>();
+               string allExpenses = @" SELECT * 
+             FROM kExpense e 
+             inner join  kForeignPartyOrgn o on e.kThirdPartyOrgn_id = o.id
+             inner join  kOrgnProduct p on p.id = e.kOrgnProduct_id ";
+            dbAbstraction.ExecuteReadTransaction(allExpenses, new AllMapper((kdt)=> {
+
+
+                while (kdt.Read())
+                {
+                    var p = new ExpenseModel();
+                    p.BriefDescription = kdt.GetString("reason");
+                    p.ExpenseDate = strToDate(kdt.GetString("transactionDate"));
+                    p.Cost = kdt.GetDecimal("amount");
+                    p.Id = kdt.GetInt("id");
+
+                    result.Add(p);
+                 }
+            }));
+            return result;
+
+
+        }
+        public ExpenseModel RecordExpense(ExpenseModel newExpense)
+        {
+            // MySqlConnection
+            return new ExpenseModel()
+          { Id =0 , BriefDescription ="not implemented yet"};
+
+        }
+    }
+}
