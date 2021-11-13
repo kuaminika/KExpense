@@ -16,6 +16,8 @@ namespace KExpense.Controllers
     [ApiController]
     public class OrgnanizationsController : ControllerBase
     {
+
+        //todo: remove that context thing
         private readonly KExpenseContext _context;
 
         public OrgnanizationsController(KExpenseContext context)
@@ -25,10 +27,6 @@ namespace KExpense.Controllers
 
         // GET: api/Orgnanizations
         [HttpGet]
-        /* public async Task<ActionResult<IEnumerable<Orgnanization>>> GetOrgnanization()
-         { 
-             return await _context.Orgnanization.ToListAsync();
-         }*/
 
         public ActionResult<IEnumerable<Orgnanization>> GetOrgnanization()
         {
@@ -36,7 +34,7 @@ namespace KExpense.Controllers
             kContainer.KIgniter ig = new kContainer.KIgniter();
             kContainer.IKServiceConfig configs = ig.IgniteServiceConfig();
             Service.factories.KOrgServiceFactory serviceFactory = new Service.factories.KOrgServiceFactory(configs);
-            Service.IKOrganizationService ps = serviceFactory.Create("Mysql"); //new Service.KOrganizationService(or);
+            Service.IKOrganizationService ps = serviceFactory.Create("Mysql"); 
             List<IOrganization> list = ps.GetAll();
 
             JsonResult result = new JsonResult(list);

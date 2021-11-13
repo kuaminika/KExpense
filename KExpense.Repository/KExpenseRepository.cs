@@ -10,7 +10,13 @@ namespace KExpense.Repository
 {
     public class KExpenseRepository:IKExpenseRepository
     {
-        private readonly AKDBAbstraction dbAbstraction;
+        private readonly  AKDBAbstraction dbAbstraction;
+       
+        public KExpenseRepository(AKDBAbstraction db)
+        {
+            this.dbAbstraction = db;
+        }
+
         // MySql.Data.MySqlClient.
 
 
@@ -48,9 +54,9 @@ namespace KExpense.Repository
         }
 
 
-        public List<ExpenseModel> GetAllKExpenses()
+        public List<IKExpense> GetAllKExpenses()
         {
-            List<ExpenseModel> result = new List<ExpenseModel>();
+            List<IKExpense> result = new List<IKExpense>();
                string allExpenses = @" SELECT * 
              FROM kExpense e 
              inner join  kForeignPartyOrgn o on e.kThirdPartyOrgn_id = o.id
@@ -65,7 +71,7 @@ namespace KExpense.Repository
                     p.ExpenseDate = strToDate(kdt.GetString("transactionDate"));
                     p.Cost = kdt.GetDecimal("amount");
                     p.Id = kdt.GetInt("id");
-
+                    p.Reason = kdt.GetString("name");
                     result.Add(p);
                  }
             }));
@@ -73,7 +79,7 @@ namespace KExpense.Repository
 
 
         }
-        public ExpenseModel RecordExpense(ExpenseModel newExpense)
+        public IKExpense RecordExpense(IKExpense newExpense)
         {
             // MySqlConnection
             return new ExpenseModel()

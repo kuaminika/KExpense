@@ -25,7 +25,16 @@ namespace KExpense.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ExpenseModel>>> GetExpenseModel()
         {
-            return await _context.ExpenseModel.ToListAsync();
+            kContainer.KIgniter ig = new kContainer.KIgniter();
+            kContainer.IKServiceConfig configs = ig.IgniteServiceConfig();
+
+            Service.factories.KExpenseServiceFactory expenseFactory = new Service.factories.KExpenseServiceFactory(configs);
+            Service.IKExpenseService iK = expenseFactory.Create("Mysql");
+
+            List<IKExpense> list =  iK.GetAll();
+            JsonResult result = new JsonResult(list);
+
+            return result;
         }
 
         // GET: api/ExpenseModels/5

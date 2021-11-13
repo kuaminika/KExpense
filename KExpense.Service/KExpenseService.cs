@@ -1,11 +1,11 @@
-﻿using KExpense.Repository;
+﻿using KExpense.Repository.interfaces;
 using KExpense.Model;
 using System;
 using System.Collections.Generic;
 
 namespace KExpense.Service
 {
-    public class  KExpenseService
+    public class  KExpenseService: IKExpenseService
     {
         IKExpenseRepository kexpenseRepository;
 
@@ -15,15 +15,15 @@ namespace KExpense.Service
         }
 
 
-        public List<ExpenseModel> GetAll()
+        public List<IKExpense> GetAll()
         {
-            List < ExpenseModel > result =  this.kexpenseRepository.GetAllKExpenses();
+            List <IKExpense> result =  this.kexpenseRepository.GetAllKExpenses();
             return result;
         }
 
-        public ExpenseModel RecordExpense(ExpenseModel newExpense)
+        public IKExpense RecordExpense(IKExpense newExpense)
         {
-            ExpenseModel savedRecord = this.kexpenseRepository.RecordExpense(newExpense);
+            IKExpense savedRecord = this.kexpenseRepository.RecordExpense(newExpense);
             return savedRecord;
         }
     }

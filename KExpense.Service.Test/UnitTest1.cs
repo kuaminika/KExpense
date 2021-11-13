@@ -20,12 +20,15 @@ namespace KExpense.Service.Test
 
             Assert.IsTrue(r.Count > 0);
         }
-
-        public void TestGetting()
+        [Test]
+        public void TestGettingExpenses()
         {
 
             string connString = "server=localhost;user id=kExpense;persistsecurityinfo=True;database=kExpense; password=kExpense1000";
             AKDBAbstraction db = new Repository.KMysql_KDBAbstraction(connString);
+            KExpense.Repository.interfaces.IKExpenseRepository ker = new KExpense.Repository.KExpenseRepository(db);
+            var r = ker.GetAllKExpenses();
+            Assert.IsTrue(r.Count > 0);
 
         }
     }

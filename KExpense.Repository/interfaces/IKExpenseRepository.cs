@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace KExpense.Repository
+namespace KExpense.Repository.interfaces
 {
     public interface IKExpenseRepository
     {
-        List<ExpenseModel> GetAllKExpenses();
-        ExpenseModel RecordExpense(ExpenseModel newExpense);
+        List<IKExpense> GetAllKExpenses();
+        IKExpense RecordExpense(IKExpense newExpense);
     }
 }
