@@ -15,40 +15,42 @@ namespace KExpense.Controllers
     public class ExpensesController : ControllerBase
     {
         private readonly KExpenseContext _context;
-
+        Service.IKExpenseService iK;
         public ExpensesController(KExpenseContext context)
         {
             _context = context;
-        }
 
-        // GET: api/ExpenseModels
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<ExpenseModel>>> GetExpenseModel()
-        {
+
             kContainer.KIgniter ig = new kContainer.KIgniter();
             kContainer.IKServiceConfig configs = ig.IgniteServiceConfig();
 
             Service.factories.KExpenseServiceFactory expenseFactory = new Service.factories.KExpenseServiceFactory(configs);
-            Service.IKExpenseService iK = expenseFactory.Create("Mysql");
+            iK = expenseFactory.Create("Mysql");
 
+        }
+
+        // GET: api/Expenses
+        [HttpGet]
+        public JsonResult GetExpenseModel()
+        {
             List<IKExpense> list =  iK.GetAll();
             JsonResult result = new JsonResult(list);
 
             return result;
         }
 
-        // GET: api/ExpenseModels/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ExpenseModel>> GetExpenseModel(int id)
+        // GET: api/Expenses/1/2021/11
+        [HttpGet("{associatedProductId}/{year}/{month}")]
+        public  JsonResult GetExpenseModel(int associatedProductId,int year, int month)
         {
-            var expenseModel = await _context.ExpenseModel.FindAsync(id);
+            Dictionary<string, int> dt = new Dictionary<string, int>();
+            dt.Add("year", year);
+            dt.Add("month", month);
+            dt.Add("associatedProductId", associatedProductId);
 
-            if (expenseModel == null)
-            {
-                return NotFound();
-            }
-
-            return expenseModel;
+            List<IKExpense> list = iK.GetAllForMonth(year, month, associatedProductId);
+            JsonResult result = new JsonResult(list);
+            return result;
         }
 
         // PUT: api/ExpenseModels/5

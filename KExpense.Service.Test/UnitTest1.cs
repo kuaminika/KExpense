@@ -1,35 +1,41 @@
+using KExpense.Repository;
 using KExpense.Repository.interfaces;
 using NUnit.Framework;
 namespace KExpense.Service.Test
 {
     public class Tests
     {
-        [SetUp]
+        AKDBAbstraction db;
+         [SetUp]
         public void Setup()
         {
+            string connString = "server=localhost;user id=kExpense;persistsecurityinfo=True;database=kExpense; password=kExpense1000";
+            db = new KMysql_KDBAbstraction(connString);
         }
 
         [Test]
         public void TestGettingAllOrgs()
         {
-            
-            string connString = "server=localhost;user id=kExpense;persistsecurityinfo=True;database=kExpense; password=kExpense1000";
-            AKDBAbstraction db = new Repository.KMysql_KDBAbstraction(connString);
-            KExpense.Repository.OrgRepository or = new Repository.OrgRepository(db);
+            OrgRepository or = new OrgRepository(db);
             var r = or.GetAll();
-
             Assert.IsTrue(r.Count > 0);
         }
+
         [Test]
         public void TestGettingExpenses()
         {
-
-            string connString = "server=localhost;user id=kExpense;persistsecurityinfo=True;database=kExpense; password=kExpense1000";
-            AKDBAbstraction db = new Repository.KMysql_KDBAbstraction(connString);
-            KExpense.Repository.interfaces.IKExpenseRepository ker = new KExpense.Repository.KExpenseRepository(db);
+            IKExpenseRepository ker = new KExpenseRepository(db);
             var r = ker.GetAllKExpenses();
             Assert.IsTrue(r.Count > 0);
+        }
 
+        [Test]
+        public void TestingGettingExpensesForMonth()
+        {
+
+            IKExpenseRepository ker = new KExpenseRepository(db);
+            var r = ker.GetAllKExpensesForMonth(2021, 8, 2);
+            Assert.IsTrue(r.Count > 0);
         }
     }
 }

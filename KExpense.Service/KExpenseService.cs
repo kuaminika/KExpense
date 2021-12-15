@@ -21,6 +21,12 @@ namespace KExpense.Service
             return result;
         }
 
+        public List<IKExpense> GetAllForMonth(int year, int month,int productId)
+        {
+            List<IKExpense> result = this.kexpenseRepository.GetAllKExpensesForMonth(year, month,productId);
+            return result;
+        }
+
         public IKExpense RecordExpense(IKExpense newExpense)
         {
             IKExpense savedRecord = this.kexpenseRepository.RecordExpense(newExpense);

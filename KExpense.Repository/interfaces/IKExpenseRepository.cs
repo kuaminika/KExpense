@@ -9,5 +9,6 @@ namespace KExpense.Repository.interfaces
     {
         List<IKExpense> GetAllKExpenses();
         IKExpense RecordExpense(IKExpense newExpense);
+        List<IKExpense> GetAllKExpensesForMonth(int year, int month, int productId);
     }
 }

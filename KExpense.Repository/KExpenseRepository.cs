@@ -86,5 +86,31 @@ namespace KExpense.Repository
           { Id =0 , BriefDescription ="not implemented yet"};
 
         }
+
+        public List<IKExpense> GetAllKExpensesForMonth(int year, int month, int product_id)
+        {
+            List<IKExpense> result = new List<IKExpense>();
+            List<KSP_Param> parameters = new List<KSP_Param>();
+            parameters.Add(new KSP_Param { Name = "product_id",    Type = KSP_ParamType.Int, Value = product_id.ToString() }) ;
+            parameters.Add(new KSP_Param { Name = "expense_year",  Type = KSP_ParamType.Int, Value = year.ToString() });
+            parameters.Add(new KSP_Param { Name = "expense_month", Type = KSP_ParamType.Int, Value = month.ToString() });
+            var mapper = new AllMapper((kdt) => {
+
+
+                while (kdt.Read())
+                {
+                    var p = new ExpenseModel();
+                    p.BriefDescription = kdt.GetString("reason");
+                    p.ExpenseDate = strToDate(kdt.GetString("transactionDate"));
+                    p.Cost = kdt.GetDecimal("amount");
+                    p.Id = kdt.GetInt("id");
+                    p.Reason = kdt.GetString("name");
+                    result.Add(p);
+                }
+            });
+            dbAbstraction.ExecuteReadSPTranasaction("getExpensesForProduct", parameters, mapper);
+
+            return result;
+        }
     }
 }
